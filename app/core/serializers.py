@@ -1,16 +1,15 @@
 from rest_framework import serializers
 from .models import Account, Host
 
-class AccountSerializer(serializers.HyperlinkedModelSerializer):
-
-
-    class Meta:
-        model = Account
-        fields = "__all__"
 
 class HostSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Host
-        fields = "__all__"
+        fields = ('id','hostname', 'account')
 
+class AccountSerializer(serializers.HyperlinkedModelSerializer):
+    hosts = HostSerializer(many=True)
+    class Meta:
+        model = Account
+        fields = ("id", "name", "external_id", "hosts")
 

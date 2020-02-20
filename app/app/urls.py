@@ -13,6 +13,6 @@ hosts_router.register(r"hosts", HostViewset, basename="account-hosts")
 urlpatterns = [
 
     path('admin/', admin.site.urls),
-    path("api/", include(router.urls)),
     path("api/", include(hosts_router.urls)),
+    path("api/", include(router.urls)),
 ]
