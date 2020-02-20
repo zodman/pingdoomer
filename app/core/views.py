@@ -14,3 +14,10 @@ class HostViewset(viewsets.ModelViewSet):
 
     def get_queryset(self):
         return Host.objects.filter(account=self.kwargs['accounts_pk'])
+
+    def perform_update(self, serializer):
+        serializer.save(account_id = self.kwargs["accounts_pk"])
+
+    def perform_create(self, serializer):
+        serializer.save(account_id = self.kwargs["accounts_pk"])
+

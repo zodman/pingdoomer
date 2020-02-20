@@ -5,7 +5,8 @@ from .models import Account, Host
 class HostSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Host
-        fields = ('id','hostname', 'account')
+        fields = ('id','hostname')
+
 
 class AccountSerializer(serializers.HyperlinkedModelSerializer):
     hosts = HostSerializer(many=True)
