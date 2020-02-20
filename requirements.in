@@ -1,2 +1,4 @@
 django
 django-rest-framework
+drf-nested-routers
+httpie
