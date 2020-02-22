@@ -6,6 +6,8 @@ import easyconf
 from influxdb import InfluxDBClient
 import logging
 
+logging.getLogger("requests").setLevel(logging.WARNING)
+logging.getLogger("urllib3").setLevel(logging.WARNING)
 
 log = logging.getLogger(__name__)
 
@@ -25,6 +27,21 @@ def run_ping(destination):
     result = ping(destination)
 
 
+def insert_failed(client, result, name, external_id, hostname):
+    d = {
+        "measurement": f"account_{external_id}",
+        "tags": {
+            "hostname": hostname,
+            "name": name,
+        },
+        "fields":{
+            "status_code": result.returncode
+        }
+    }
+
+    return client.write_points([d])
+
+
 def insert_influxdb(client, stats, name, external_id, hostname):
     d = {
         "measurement": f"account_{external_id}",
@@ -32,9 +49,16 @@ def insert_influxdb(client, stats, name, external_id, hostname):
             "hostname": hostname,
             "name": name,
         },
-        "fields":stats
+        "fields":{
+            'return_code': stats["return_code"]
+        }
     }
-    #log.debug("write to influxdb {}".format(d))
+
+    return_code = stats["return_code"]
+    if return_code == 0 or return_code == 1:
+        d["fields"]=stats
+
+    log.debug("write to influxdb {}".format(json.dumps(d, indent=4)))
     return client.write_points([d])
 
 
@@ -48,13 +72,10 @@ def fetch():
         if i.get("hosts"):
             for host in i["hosts"]:
                 hostname = host["hostname"]
-                success, result_stats = ping(hostname)
-                log.info("result ping {}".format(result_stats))
-                if success:
-                    insert_influxdb(influxdb_client, result_stats,name,
+                result_stats = ping(hostname)
+                #log.info("result ping {}".format(result_stats))
+                insert_influxdb(influxdb_client, result_stats,name,
                                     external_id, hostname)
-                else:
-                    log.info("error on ping")
 
 
 
@@ -65,10 +86,10 @@ def ping(destination, count=1):
     transmitter.destination = destination
     transmitter.count = count
     result = transmitter.ping()
-    log.debug("ping result {}".format(result))
-    if result.returncode == 0:
-        return True, ping_parser.parse(result).as_dict()
-    return False, result
+    # log.debug("ping result {}".format(result))
+    return_dict = ping_parser.parse(result).as_dict()
+    return_dict["return_code"]= result.returncode
+    return return_dict
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.DEBUG)
