@@ -15,5 +15,9 @@ class Host(models.Model):
     account = models.ForeignKey("Account", related_name="hosts",
                                 on_delete=models.CASCADE)
 
+
+    class Meta:
+        unique_together =("hostname", "account")
+
     def __str__(self):
         return self.hostname
