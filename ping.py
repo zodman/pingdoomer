@@ -20,6 +20,9 @@ INFLUXDB_CONF = conf.INFLUXDB(initial=dict(host="localhost",username='root',
                               cast=dict)
 CELERY_ARGS = conf.CELERY(initial={'broker':'redis://localhost'}, cast=dict)
 SECONDS = conf.SECONDS(initial=30, cast=int)
+TOKEN = conf.TOKEN(initial="")
+
+headers = {'Authorization': f'Token {TOKEN}'}
 
 # clients
 app = Celery("ping", **CELERY_ARGS)
@@ -44,7 +47,7 @@ def run_ping(hostname,name, external_id):
 def fetch():
     log.info("executing fetch")
     base_url = f"{BASE_URL}api/accounts/"
-    resp = requests.get(base_url).json()
+    resp = requests.get(base_url, headers=headers).json()
     for i in resp:
         external_id= i.get("external_id")
         name = i.get("name")
