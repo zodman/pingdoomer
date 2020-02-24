@@ -6,3 +6,4 @@ easyconf
 celery[redis]
 influxdb
 requests
+django-redis
