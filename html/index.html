@@ -1,7 +1,62 @@
+<!DOCTYPE html>
 <html>
+    <head>
+        <meta charset="utf-8">
+        <title>index</title>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.8.0/css/bulma.min.css">
+        
+    </head>
     <body>
+        <section class="section is-large">
+            <div class="container" id="main"></div>
+        </section>
+
+
+
+        
+        <script id="detail" charset="utf-8" type="text/x-handlebars-template">
+             <h1 class="title">  Hosts {{account_id}} </h1>
+             <a class="button" onclick="main()"> back </a>
+            <ul>
+                {{#each data}}
+                <li>
+                   <a class="detail" onclick="detail({{../account_id}},{{this.id}})"  id="hosts_{{this.id}}">{{ this.hostname}}</a>
+                </li>
+                {{/each}}
+
+            </ul>
+        </script>
+
+        
+        
+        <script id="list_hosts" charset="utf-8" type="text/x-handlebars-template">
+             <h1 class="title">  Hosts {{account_id}} </h1>
+             <a class="button" onclick="main()"> back </a>
+            <ul>
+                {{#each data}}
+                <li>
+                   <a class="detail" onclick="detail({{../account_id}},{{this.id}})"  id="hosts_{{this.id}}">{{ this.hostname}}</a>
+                </li>
+                {{/each}}
+
+            </ul>
+        </script>
+
+        
+        <script id="list_account" charset="utf-8" type="text/x-handlebars-template">
+            <h1 class="title"> Accounts </h1>
+            <ul>
+                {{#each this}}
+                <li>
+                   <a onclick="fetch_account({{this.id}})" class="detail" id="account_{{this.id}}">
+                   {{ this.name}} - {{this.external_id}}
+                   </a>
+                </li>
+                {{/each}}
+
+            </ul>
+        </script>
+
           <script src="./index.js"></script>
-
-
     </body>
 </html>

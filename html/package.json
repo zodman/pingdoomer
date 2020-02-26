@@ -4,12 +4,13 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+      "dev": "parcel index.html",
+      "build": "parcel build index.html"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "intercooler": "^1.2.3",
+    "handlebars": "^4.7.3",
     "jquery": "^3.4.1"
   }
 }
