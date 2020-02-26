@@ -122,3 +122,5 @@ dmypy.json
 # End of https://www.gitignore.io/api/django
 
 ping.yaml
+node_modules
+html/node_modules
