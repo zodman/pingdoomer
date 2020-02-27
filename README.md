@@ -82,6 +82,14 @@ $ python
 Celery workers to execute the ping and a celery scheduler to execute each time needed.
 
 
+### commands to add
+
+```
+ pip install httpie
+ http POST localhost:8000/api/accounts/ 'Authorization:Token <token>' name=andres1 external_id=10
+ http POST localhost:8000/api/accounts/6/hosts/ 'Authorization:Token <token>' hostname=waifu.ca
+```
+
 
 
 
