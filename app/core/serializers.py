@@ -14,8 +14,8 @@ class HostSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class AccountSerializer(serializers.HyperlinkedModelSerializer):
-    hosts = HostSerializer(many=True)
+    #hosts = HostSerializer(many=True)
     class Meta:
         model = Account
-        fields = ("id", "name", "external_id", "hosts")
+        fields = ("id", "name", "external_id")
 

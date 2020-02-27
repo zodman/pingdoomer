@@ -5,6 +5,7 @@ import requests
 import easyconf
 from influxdb import InfluxDBClient
 import logging
+import os
 
 # logging
 logging.getLogger("requests").setLevel(logging.WARNING)
@@ -48,7 +49,7 @@ def run_ping(hostname, name, external_id):
 
 
 @app.task
-def fetch():
+def fetch(debug=False):
     log.info("executing fetch")
     base_url = f"{BASE_URL}api/accounts/"
     resp = requests.get(base_url, headers=headers)
@@ -57,9 +58,13 @@ def fetch():
     for i in resp:
         external_id = i.get("external_id")
         name = i.get("name")
-        if i.get("hosts"):
-            for host in i["hosts"]:
-                hostname = host["hostname"]
+        id = i.get("id")
+        hosts = requests.get(f"{base_url}{id}/hosts/").json()
+        for host in hosts:
+            hostname = host["hostname"]
+            if debug:
+                run_ping(hostname, name, external_id)
+            else:
                 run_ping.delay(hostname, name, external_id)
 
 
@@ -91,5 +96,5 @@ def ping(destination, count=1):
 
 
 if __name__ == "__main__":
-    fetch()
+    fetch(debug=True)
     # app.start()
