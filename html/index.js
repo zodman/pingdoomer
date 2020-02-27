@@ -42,9 +42,19 @@ var build_graph = (context) => {
                     'data': _.map(context.data.summary, "mean_rtt_avg")
                  }
              ]
-        }
+        },
+		'options':{
+                        responsive: false,
+                        width:500,
+                        height:300,
+                        scaleShowGridLines: false,
+                        showScale: false,
+                        maintainAspectRatio: this.maintainAspectRatio,
+                        barShowStroke: false}
+
     }
-    var chart = new chartjs(ctx,opts, {responsive:true, maintainAspectRatio: false});
+
+    var chart = new chartjs(ctx,opts,	);
 
 
 }
