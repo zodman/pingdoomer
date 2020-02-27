@@ -51,8 +51,9 @@ def run_ping(hostname, name, external_id):
 def fetch():
     log.info("executing fetch")
     base_url = f"{BASE_URL}api/accounts/"
-    resp = requests.get(base_url, headers=headers).json()
+    resp = requests.get(base_url, headers=headers)
     resp.raise_for_status()
+    resp = resp.json()
     for i in resp:
         external_id = i.get("external_id")
         name = i.get("name")

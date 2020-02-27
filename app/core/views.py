@@ -37,12 +37,27 @@ class HostViewset(viewsets.ModelViewSet):
         client = InfluxDBClient(**influx_conf)
         external_id = host.account.external_id
         hostname = host.hostname
-        result = client.query(f"""
-            SELECT *
-                     FROM "ping"."autogen"."account_{external_id}" 
+        sql_all =f"""
+        select * 
+                FROM "ping"."autogen"."account_{external_id}" 
                      WHERE time > now() - 7d 
+                     AND "hostname"='{hostname}' limit 50
+        """
+        sql = f"""
+            Select * from (
+            SELECT 
+                count("rtt_avg") AS "count_rtt_avg", 
+                mean("rtt_avg") AS "mean_rtt_avg"
+                FROM "ping"."autogen"."account_{external_id}" 
+                     WHERE time > now() - 30d 
                      AND "hostname"='{hostname}'
-                    """)
-        res = list(result.get_points())
+                     GROUP BY time(10m)
+
+                    ) where "count_rtt_avg" > 0  
+        """
+        res = {
+            'all': list(client.query(sql_all).get_points()),
+            'summary': list(client.query(sql).get_points())
+        }
         return Response(res)
 

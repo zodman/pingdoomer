@@ -8,6 +8,7 @@
     </head>
     <body>
         <section class="section is-large">
+             <a class="button" onclick="main()"> back </a>
             <div class="container" id="main"></div>
         </section>
 
@@ -15,23 +16,51 @@
 
         
         <script id="detail" charset="utf-8" type="text/x-handlebars-template">
+
              <h1 class="title">  Hosts {{account_id}} </h1>
-             <a class="button" onclick="main()"> back </a>
-            <ul>
-                {{#each data}}
-                <li>
-                   <a class="detail" onclick="detail({{../account_id}},{{this.id}})"  id="hosts_{{this.id}}">{{ this.hostname}}</a>
-                </li>
+
+<div class="chart-container">
+	        <canvas id="myChart" width="200" height="200"></canvas>
+</div>
+
+
+            <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
+                <tr>
+                    <th>Time</th>
+                    <th>Status</th>
+                    <th>Avg response</th>
+                </tr>
+                
+                {{#each data.all}}
+                <tr>
+                   <td>
+                    {{time}}
+                   </td>
+                   <td>
+                   {{#ifEquals return_code  0 }}
+                    <span class="tag is-success">ONLINE</span>
+                   {{/ifEquals}}
+                   {{#ifEquals return_code  1 }}
+                    <span class="tag is-danger">OFFLINE</span>
+                   {{/ifEquals}}
+                    {{#ifEquals return_code  1 }}
+                    <span class="tag is-light">No reply</span>
+                   {{/ifEquals}}
+
+                   </td>
+                   <td>
+                    {{rtt_avg}}
+                   </td>
+                </tr>
                 {{/each}}
 
-            </ul>
+            </table>
         </script>
 
         
         
         <script id="list_hosts" charset="utf-8" type="text/x-handlebars-template">
              <h1 class="title">  Hosts {{account_id}} </h1>
-             <a class="button" onclick="main()"> back </a>
             <ul>
                 {{#each data}}
                 <li>

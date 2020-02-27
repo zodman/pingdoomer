@@ -4,13 +4,18 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-      "dev": "parcel index.html",
-      "build": "parcel build index.html"
+    "dev": "parcel index.html",
+    "build": "parcel build index.html"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "chart.js": "^2.9.3",
     "handlebars": "^4.7.3",
-    "jquery": "^3.4.1"
+    "jquery": "^3.4.1",
+    "lodash": "^4.17.15"
+  },
+  "devDependencies": {
+    "eslint": "^6.8.0"
   }
 }
