@@ -9,4 +9,7 @@ requests
 django-redis
 django-cors-headers
 
+git+https://github.com/zodman/pydnsbl.git
+
+django-test-plus
 honcho

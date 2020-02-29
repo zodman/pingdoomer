@@ -7,7 +7,7 @@ from .models import Account, Host
 class HostSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Host
-        fields = ('id','hostname')
+        fields = ('id','hostname', 'type')
         #TODO validation unique_toguether
 
 

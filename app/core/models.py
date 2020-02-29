@@ -24,7 +24,7 @@ class Host(models.Model):
 
 
     class Meta:
-        unique_together =("hostname", "account")
+        unique_together =("hostname", "account", "type")
 
     def __str__(self):
         return self.hostname

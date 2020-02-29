@@ -23,7 +23,8 @@ INFLUXDB_CONF = conf.INFLUXDB(
     cast=dict,
 )
 CELERY_ARGS = conf.CELERY(initial={"broker": "redis://localhost"}, cast=dict)
-SECONDS = conf.SECONDS(initial=30, cast=int)
+PING_SECONDS = conf.PING_SECONDS(initial=30, cast=int)
+BLACKLIST_SECONDS = conf.BLACKLIST_SECONDS(initial=30, cast=int)
 TOKEN = conf.TOKEN(initial="")
 
 headers = {"Authorization": f"Token {TOKEN}"}
@@ -34,9 +35,10 @@ app = Celery("ping", include=['ping.tasks',], **CELERY_ARGS)
 
 @app.on_after_configure.connect
 def setup_periodic_task(sender, **kwargs):
-    log.info("setup periodic task {}".format(SECONDS))
+    log.info("setup periodic task")
     from .tasks import fetch
-    app.add_periodic_task(SECONDS * 1.0, fetch.s(), name="every {}".format(SECONDS))
+    sender.add_periodic_task(PING_SECONDS * 1.0, fetch.s("ping", debug=False), name="every {}".format(PING_SECONDS))
+    sender.add_periodic_task(BLACKLIST_SECONDS * 1.0, fetch.s("blacklist", debug=False), name="every {}".format(BLACKLIST_SECONDS))
 
 
 

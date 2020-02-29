@@ -1,6 +1,7 @@
 from .celery import *
 import logging
-
+from pydnsbl import DNSBLChecker
+import socket
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -13,9 +14,15 @@ def run_ping(hostname, name, external_id):
     result_stats = ping(hostname)
     return insert_influxdb(influxdb_client, result_stats, name, external_id, hostname)
 
+@app.task
+def run_dnsbl(hostname, account):
+    log.info(f"run_dnsbl({hostname},{account}")
+    result = dnsbl(hostname, account)
+    client = InfluxDBClient(**INFLUXDB_CONF)
+    insert_influxdb_bl(client, result, account)
 
 @app.task
-def fetch(debug=False):
+def fetch(mode, debug=False):
     log.info("executing fetch")
     base_url = f"{BASE_URL}api/accounts/"
     resp = requests.get(base_url, headers=headers)
@@ -28,10 +35,40 @@ def fetch(debug=False):
         hosts = requests.get(f"{base_url}{id}/hosts/").json()
         for host in hosts:
             hostname = host["hostname"]
-            if debug:
-                run_ping(hostname, name, external_id)
-            else:
-                run_ping.delay(hostname, name, external_id)
+            if host["type"] == "ping" and mode == "ping":
+                if debug:
+                    run_ping(hostname, name, external_id)
+                else:
+                    run_ping.delay(hostname, name, external_id)
+            if host["type"] == "black" and mode == "blacklist":
+                if debug:
+                    run_dnsbl(hostname, i)
+                else:
+                    run_dnsbl.delay(hostname, i)
+
+
+
+def insert_influxdb_bl(client, result, account):
+    hostname = result.get("hostname")
+    name = account.get("name")
+    external_id = account.get("external_id")
+
+    fields = {}
+    fields=result["result"]
+    fields["blacklisted"] = result["blacklisted"]
+
+    d = {
+        "measurement": f"account_{external_id}_bl",
+        "tags": {
+            "hostname": hostname, 
+            "name": name,
+            "blacklisted": result["blacklisted"]
+        },
+        "fields":fields,
+    }
+
+    log.debug("write to influxdb {}".format(json.dumps(d, indent=4)))
+    return client.write_points([d])
 
 
 def insert_influxdb(client, stats, name, external_id, hostname):
@@ -60,6 +97,29 @@ def ping(destination, count=1):
     return_dict["return_code"] = result.returncode
     return return_dict
 
+def dnsbl(hostname, account):
+    result_ip = socket.gethostbyname(hostname)
+    log.debug(f"HOSTNAME: {hostname} IP: {result_ip}")
+    checker = DNSBLChecker()
+    r = checker.check_ip(result_ip)
+    log.debug(f"{result_ip} is {r.blacklisted} by {r.detected_by} ")
+    dict_result = {}
+
+    providers = [i.host for  i in r.providers ]
+    for i in providers:
+        dict_result[i] = False 
+    for host, result in  r.detected_by.items():
+        dict_result[host] = True
+    return {
+        'blacklisted': r.blacklisted,
+        'ip': result_ip,
+        'hostname':hostname,
+        'detected_by': r.detected_by,
+    #    'providers': providers,
+        'result': dict_result
+    }
+
 
 if __name__ == "__main__":
-    fetch(debug=True)
+    log.debug("set debug")
+    fetch("ping", debug=True)

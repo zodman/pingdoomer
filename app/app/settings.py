@@ -120,7 +120,7 @@ REST_FRAMEWORK = {
 
 import easyconf.loader
 
-PING_CONFIG = easyconf.loader.load_config(os.path.join(BASE_DIR, "..","ping", "ping.yaml"))
+PING_CONFIG = easyconf.loader.load_config(os.path.join(BASE_DIR, "..", "ping.yaml"))
 
 CACHES = {
     "default": {
