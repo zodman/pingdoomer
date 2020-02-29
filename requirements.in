@@ -8,3 +8,5 @@ influxdb
 requests
 django-redis
 django-cors-headers
+
+honcho
