@@ -55,7 +55,7 @@ def insert_influxdb_bl(client, result, account):
 
     fields = {}
     fields=result["result"]
-    fields["blacklisted"] = result["blacklisted"]
+    fields["blacklisted"] = 1 if result["blacklisted"] else 0
 
     d = {
         "measurement": f"account_{external_id}_bl",
@@ -107,19 +107,22 @@ def dnsbl(hostname, account):
 
     providers = [i.host for  i in r.providers ]
     for i in providers:
-        dict_result[i] = False 
+        dict_result[i] = 0
     for host, result in  r.detected_by.items():
-        dict_result[host] = True
-    return {
+        dict_result[host] = 1
+    ds = {
         'blacklisted': r.blacklisted,
         'ip': result_ip,
         'hostname':hostname,
         'detected_by': r.detected_by,
-    #    'providers': providers,
+        'providers': providers,
         'result': dict_result
     }
+    log.debug(ds)
+    return ds
 
 
 if __name__ == "__main__":
     log.debug("set debug")
-    fetch("ping", debug=True)
+    import sys
+    fetch(sys.argv[1], debug=True)

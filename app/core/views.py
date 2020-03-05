@@ -64,15 +64,29 @@ class HostViewset(viewsets.ModelViewSet):
         external_id = host.account.external_id
         hostname = host.hostname
         sql = f"""
-        SELECT  *
-            FROM "ping"."autogen"."account_{external_id}_bl" 
-            WHERE time > now() -  7d
-            AND time < now() 
-            AND  "hostname"='{hostname}'
-            limit 30
+            SELECT last("blacklisted") AS "last_blacklisted" 
+            FROM "ping"."autogen"."account_{external_id}_bl"
+            WHERE time > now() - 7d AND time < now() 
+            and "hostname"='{hostname}'
+            GROUP BY time(1m), "hostname" 
+            FILL(0)  
+            order by time asc
+            limit 1
+
         """
         res = list(client.query(sql).get_points())
-        return Response(res)
+        
+        sql = f"""
+        SELECT * FROM "ping"."autogen"."account_{external_id}_bl" 
+        WHERE time > now() -7d
+            AND time < now()
+            AND "hostname"='{hostname}' 
+            order by time desc
+            limit 1
+        """
+        res2 = list(client.query(sql).get_points())
+        return Response({'last': res, 'all':res2})
+
     # @method_decorator(cache_page(10))
     def retrieve(self, request, pk=None, accounts_pk=None):
         qs = Host.objects.all().filter(account_id= accounts_pk)

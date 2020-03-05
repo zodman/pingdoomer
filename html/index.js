@@ -6,8 +6,6 @@ _ = require("lodash")
 let url ="http://localhost:8000/api/"
 let TOKEN = "45dd454f58fae44d5289e49ca2823de424df1afb"
 
-
-
 //configure
 $.ajaxSetup({
     beforeSend: function(xhr) {
@@ -53,24 +51,27 @@ var build_graph = (context) => {
                         barShowStroke: false}
 
     }
-
     var chart = new chartjs(ctx,opts,	);
-
 
 }
 
-var detail = (account_id, id) => {
-     $.getJSON(url + `accounts/${account_id}/hosts/${id}`, (resp)=>{
-         let context = {
-             'account_id': account_id,
-             'data':resp
-         }
-         let res = render("detail", context);
-        $("#main").html(res);
-         build_graph(context);
-    });
+var detail = (account_id, id , type) => {
+        $.getJSON(url + `accounts/${account_id}/hosts/${id}`, (resp)=>{
+            let context = {
+                 'account_id': account_id,
+                 'data':resp
+            }
+            if ( type === "ping") {
+                let res = render("detail_ping", context);
+                $("#main").html(res);
+                build_graph(context);
+            }
+            if (type==="black") {
+                let res = render("detail_blacklist", context);
+                $("#main").html(res);
 
-
+            }
+       });
 }
 
 var fetch_account = (id) => {

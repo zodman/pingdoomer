@@ -13,17 +13,58 @@
         </section>
 
 
+        <script id="detail_blacklist" charset="utf-8" type="text/x-handlebars-template">
+            <h1 class="title">  Hosts {{account_id}} - blacklist </h1>
+            <div>
+                    <h2 class="subtitle"> last check </h2>
+                {{#each data.all }}
+                   {{#ifEquals  blacklisted 0 }}
+                    <span class="tag is-success">CLEAN</span>
+                   {{/ifEquals}}
+                   {{#ifEquals blacklisted 1 }}
+                    <span class="tag is-danger"> SHAMEEEE </span>
+                   {{/ifEquals}}
 
-        
-        <script id="detail" charset="utf-8" type="text/x-handlebars-template">
+                {{/each}}
+                    <table class="table">
+                {{#each data.all }}
+                    {{#each this }}        
+                        <tr>
+                            <td>{{@key}}</td>
+                        <td>
+                        
+                    {{#ifEquals  this 0 }}
+                    <span class="tag is-success">CLEAN</span>
+                   {{/ifEquals}}
+                   {{#ifEquals this 1  }}
+                    <span class="tag is-danger"> SHAMEEEE </span>
+                   {{/ifEquals}}
 
+
+                        
+                        
+                        </td>
+                        </tr>
+                    {{/each }}
+                {{/each}}
+                    </table>
+
+
+
+            </div>
+
+            <div class="chart-container">
+                <canvas id="myChart" width="800" height="400"></canvas>
+            </div>
+        </script>
+
+
+
+        <script id="detail_ping" charset="utf-8" type="text/x-handlebars-template">
              <h1 class="title">  Hosts {{account_id}} </h1>
-
-<div class="chart-container">
-	        <canvas id="myChart" width="800" height="400"></canvas>
-</div>
-
-
+            <div class="chart-container">
+                <canvas id="myChart" width="800" height="400"></canvas>
+            </div>
             <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
                 <tr>
                     <th>Time</th>
@@ -64,7 +105,7 @@
             <ul>
                 {{#each data}}
                 <li>
-                   <a class="detail" onclick="detail({{../account_id}},{{this.id}})"  id="hosts_{{this.id}}">{{ this.hostname}}</a>
+                   <a class="detail" onclick="detail({{../account_id}},{{this.id}}, '{{this.type}}')"  id="hosts_{{this.id}}">{{ this.hostname}} - {{this.type}}</a>
                 </li>
                 {{/each}}
 
