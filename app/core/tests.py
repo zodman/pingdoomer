@@ -10,8 +10,13 @@ class TestRest(APITestCase):
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
 
 
-    def test_create(self):
+    def _create_account(self):
         data = dict(  name="andres", external_id=1)
         self.post("account-list",data=data)
         self.response_201()
+        return self.last_response.json()
+
+    def test_create(self):
+        resp = self._create_account()
+        assert resp.get("id")
         
