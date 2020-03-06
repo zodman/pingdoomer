@@ -124,3 +124,5 @@ dmypy.json
 ping.yaml
 node_modules
 html/node_modules
+tags
+TAGS
