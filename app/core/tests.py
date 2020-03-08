@@ -32,6 +32,10 @@ class TestRest(APITestCase):
             'hostname':'google.com',
         }        
         self.post("account-hosts-list", accounts_pk=id, data=data)
+        host_id = self.last_response.json().get("id")
+        self.get("account-hosts-detail", accounts_pk=id, pk = host_id)
+        self.response_200()
+        resp = self.last_response.json()
 
 
         

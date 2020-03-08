@@ -19,7 +19,7 @@ def run_dnsbl(hostname, account):
     log.info(f"run_dnsbl({hostname},{account}")
     result = dnsbl(hostname, account)
     client = InfluxDBClient(**INFLUXDB_CONF)
-    insert_influxdb_bl(client, result, account)
+    return insert_influxdb_bl(client, result, account)
 
 @app.task
 def fetch(mode, debug=False):
