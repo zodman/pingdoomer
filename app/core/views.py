@@ -21,13 +21,23 @@ class HostViewset(viewsets.ModelViewSet):
     serializer_class = HostSerializer
 
     def get_queryset(self):
-        return Host.objects.filter(account=self.kwargs['accounts_pk'])
+        hosts = Host.objects.filter(account=self.kwargs['accounts_pk'])
+        return hosts
 
     def perform_update(self, serializer):
         serializer.save(account_id = self.kwargs["accounts_pk"])
 
     def perform_create(self, serializer):
         serializer.save(account_id = self.kwargs["accounts_pk"])
+
+    # @method_decorator(cache_page(10))
+    def ____retrieve(self, request, pk=None, accounts_pk=None):
+        qs = Host.objects.all().filter(account_id= accounts_pk)
+        host = get_object_or_404(qs, pk=pk)
+        if host.type == PING:
+            return self._ping(host)
+        if host.type == BLACKLIST:
+            return self._blacklist(host)
 
     def _ping(self, host):
         influx_conf = settings.PING_CONFIG["INFLUXDB"]
@@ -87,11 +97,4 @@ class HostViewset(viewsets.ModelViewSet):
         res2 = list(client.query(sql).get_points())
         return Response({'last': res, 'all':res2})
 
-    # @method_decorator(cache_page(10))
-    def retrieve(self, request, pk=None, accounts_pk=None):
-        qs = Host.objects.all().filter(account_id= accounts_pk)
-        host = get_object_or_404(qs, pk=pk)
-        if host.type == PING:
-            return self._ping(host)
-        if host.type == BLACKLIST:
-            return self._blacklist(host)
+

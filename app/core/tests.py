@@ -11,12 +11,27 @@ class TestRest(APITestCase):
 
 
     def _create_account(self):
-        data = dict(  name="andres", external_id=1)
+        data = dict(name="andres", external_id=1)
         self.post("account-list",data=data)
         self.response_201()
         return self.last_response.json()
 
     def test_create(self):
+        self.get_check_200("account-list")
+
         resp = self._create_account()
-        assert resp.get("id")
+
+        id =  resp.get("id", False)
+        self.assertTrue(id, resp)
+
+        self.get("account-hosts-list", accounts_pk=id)
+        self.response_200()
+
+        data = {
+            'type':'ping',
+            'hostname':'google.com',
+        }        
+        self.post("account-hosts-list", accounts_pk=id, data=data)
+
+
         
