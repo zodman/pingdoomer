@@ -37,6 +37,7 @@ class TestRest(APITestCase):
         self.get("account-hosts-detail", accounts_pk=id, pk = host_id)
         self.response_200()
         resp = self.last_response.json()
+        self.assertTrue(resp)
 
 
 
