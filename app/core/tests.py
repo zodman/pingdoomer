@@ -42,7 +42,7 @@ class TestRest(APITestCase):
 
     def test_host_detail(self):
         resp = self._create_account()
-        id =  resp.get("id", False)
+        id =  resp.get("id")
         resp = self._create_hosts()
         host_id = resp.get("id")
         self.get("account-hosts-detail", accounts_pk=id, pk = host_id)
