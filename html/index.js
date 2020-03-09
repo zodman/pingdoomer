@@ -56,7 +56,7 @@ var build_graph = (context) => {
 }
 
 var detail = (account_id, id , type) => {
-        $.getJSON(url + `accounts/${account_id}/hosts/${id}`, (resp)=>{
+        $.getJSON(url + `accounts/${account_id}/hosts/${id}/result/`, (resp)=>{
             let context = {
                  'account_id': account_id,
                  'data':resp

@@ -9,6 +9,7 @@ from influxdb import InfluxDBClient
 import json
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
+from rest_framework.decorators import action
 
 
 class AccountViewset(viewsets.ModelViewSet):
@@ -31,7 +32,8 @@ class HostViewset(viewsets.ModelViewSet):
         serializer.save(account_id = self.kwargs["accounts_pk"])
 
     # @method_decorator(cache_page(10))
-    def ____retrieve(self, request, pk=None, accounts_pk=None):
+    @action(detail=True)
+    def result(self, request, pk=None, accounts_pk=None):
         qs = Host.objects.all().filter(account_id= accounts_pk)
         host = get_object_or_404(qs, pk=pk)
         if host.type == PING:
