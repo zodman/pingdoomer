@@ -18,17 +18,15 @@ handlebars.registerHelper('ifEquals', function(arg1, arg2, options) {
 });
 
 // helpers
-
 let render = (element_id, context) => {
     let template_account = document.getElementById(element_id).innerHTML;
-     let tmpl = handlebars.compile(template_account)
-        let html = tmpl(context);
+    let tmpl = handlebars.compile(template_account)
+    let html = tmpl(context);
     return html;
 }
 
 
 var build_graph = (context) => {
-
     var ctx = document.getElementById('myChart').getContext('2d');
     var opts =  {
         'type':'line',
@@ -49,33 +47,32 @@ var build_graph = (context) => {
                         showScale: false,
                         maintainAspectRatio: this.maintainAspectRatio,
                         barShowStroke: false}
-
     }
-    var chart = new chartjs(ctx,opts,	);
+    var chart = new chartjs(ctx,opts);
 
 }
 
 var detail = (account_id, id , type) => {
-        $.getJSON(url + `accounts/${account_id}/hosts/${id}/result/`, (resp)=>{
-            let context = {
-                 'account_id': account_id,
-                 'data':resp
-            }
-            if ( type === "ping") {
-                let res = render("detail_ping", context);
-                $("#main").html(res);
-                build_graph(context);
-            }
-            if (type==="black") {
-                let res = render("detail_blacklist", context);
-                $("#main").html(res);
+    $.getJSON(url + `accounts/${account_id}/hosts/${id}/result/`, (resp)=>{
+        let context = {
+             'account_id': account_id,
+             'data':resp
+        }
+        if ( type === "ping") {
+            let res = render("detail_ping", context);
+            $("#main").html(res);
+            build_graph(context);
+        }
+        if (type==="black") {
+            let res = render("detail_blacklist", context);
+            $("#main").html(res);
 
-            }
-       });
+        }
+   });
 }
 
 var fetch_account = (id) => {
-     $.getJSON(url + "accounts/"+ id + "/hosts/", (resp)=>{
+    $.getJSON(url + "accounts/"+ id + "/hosts/", (resp)=>{
          let context = {
              'account_id': id,
              'data': resp,

@@ -1,18 +1,21 @@
 from django.db import models
 
-
 class Contact(models.Model):
     name = models.CharField(max_length=100)
     phone = models.CharField(max_length=20)
     email = models.EmailField(blank=True, null=True)
     active = models.BooleanField(default=True)
+    account = models.ForeignKey("Account", related_name="contacts", on_delete=models.CASCADE)
 
+    def __str__(self):
+        return self.name
 
+    class Meta:
+        unique_together =("phone", "email")
 
 class Account(models.Model):
     name = models.CharField(max_length=100)
     external_id = models.PositiveIntegerField(unique=True)
-
 
     def __str__(self):
         return self.name
@@ -42,4 +45,6 @@ class Alert(models.Model):
     options = models.TextField()
     host = models.ForeignKey("Host", related_name="alerts", on_delete=models.CASCADE)
     active = models.BooleanField(default=True)
+    account = models.ForeignKey("Account", related_name="alerts", on_delete=models.CASCADE)
+
 

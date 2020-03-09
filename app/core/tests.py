@@ -1,5 +1,6 @@
 from rest_framework.authtoken.models import Token
 from test_plus import APITestCase
+import faker
 
 
 class TestRest(APITestCase):
@@ -8,6 +9,7 @@ class TestRest(APITestCase):
         self.user = self.make_user("user1")
         token = Token.objects.create(user=self.user)
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
+        self.faker = faker.Faker()
 
 
     def _create_account(self):
@@ -26,11 +28,10 @@ class TestRest(APITestCase):
 
         self.get("account-hosts-list", accounts_pk=id)
         self.response_200()
-
         data = {
-            'type':'ping',
-            'hostname':'google.com',
-        }        
+            'type':self.faker.random_element(elements=("ping","black")),
+            'hostname':self.faker.domain_name(),
+        }
         self.post("account-hosts-list", accounts_pk=id, data=data)
         host_id = self.last_response.json().get("id")
         self.get("account-hosts-detail", accounts_pk=id, pk = host_id)
@@ -38,4 +39,5 @@ class TestRest(APITestCase):
         resp = self.last_response.json()
 
 
-        
+
+

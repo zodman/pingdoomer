@@ -5,7 +5,13 @@ from rest_framework_nested.serializers import NestedHyperlinkedModelSerializer
 from rest_framework_nested.relations import NestedHyperlinkedRelatedField
 
 
-from .models import Account, Host
+from .models import Account, Host, Contact
+
+
+class ContactSerailizer(serializers.ModelSerializer):
+    class Meta:
+        model = Contact
+        fields = "__all__"
 
 
 
@@ -26,6 +32,13 @@ class AAAHostSerializer(serializers.HyperlinkedModelSerializer):
         fields = "__all__"
 
 class AccountSerializer(serializers.HyperlinkedModelSerializer):
+    contacts = NestedHyperlinkedRelatedField(
+                many=True,
+                read_only=True,
+                view_name='account-contacts-detail',
+                parent_lookup_kwargs={'accounts_pk': 'account__pk'}
+            )
+
     hosts = NestedHyperlinkedRelatedField(
                 many=True,
                 read_only=True,
@@ -34,5 +47,5 @@ class AccountSerializer(serializers.HyperlinkedModelSerializer):
             )
     class Meta:
         model = Account
-        fields = ("id", "name", "external_id", "hosts")
+        fields = ("id", "name", "external_id", "hosts", "contacts")
 

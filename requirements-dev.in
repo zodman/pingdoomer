@@ -1,0 +1,7 @@
+-r requirements.in
+django-test-plus
+django-seed
+coverage
+honcho
+
+
