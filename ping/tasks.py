@@ -122,7 +122,7 @@ def dnsbl(hostname, account):
     return ds
 
 
-if __name__ == "__main__":
+if __name__ == "__main__": # pragma: no cover
     log.debug("set debug")
     import sys
     fetch(sys.argv[1], debug=True)
