@@ -31,19 +31,18 @@ class TestRest(APITestCase):
             'hostname':self.faker.domain_name(),
         }
         self.post("account-hosts-list", accounts_pk=id, data=data)
+        self.response_201()
         return self.last_response.json()
 
     def test_create(self):
         self._create_account()
+
     def test_create_host(self):
-        resp = self._create_account()
-        id =  resp.get("id", False)
         resp = self._create_hosts()
 
     def test_host_detail(self):
-        resp = self._create_account()
-        id =  resp.get("id")
         resp = self._create_hosts()
+        print(resp)
         host_id = resp.get("id")
         self.get("account-hosts-detail", accounts_pk=id, pk = host_id)
         self.response_200()
