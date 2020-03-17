@@ -48,7 +48,7 @@ class TestRest(APITestCase):
         self.response_200()
         resp = self.last_response.json()
         self.assertTrue(resp)
-    def test_create_contact(self):
+    def _create_contact(self):
         id, _ = self._create_hosts()
         self.get_check_200("account-contacts-list", accounts_pk=id)
 
@@ -60,6 +60,15 @@ class TestRest(APITestCase):
 
         self.post("account-contacts-list", accounts_pk=id, data=data)
         self.response_201()
+        resp = self.last_response.json()
+        return resp
+
+
+    def test_create_alerts(self):
+        resp = self._create_contact()
+        contact_id = resp.get("id")
+        self.get_check_200("contact-alerts-list", accounts_pk=id, contacts_pk=contact_id)
+
 
 
 

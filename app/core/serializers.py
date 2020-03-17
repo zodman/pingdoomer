@@ -5,11 +5,17 @@ from rest_framework_nested.serializers import NestedHyperlinkedModelSerializer
 from rest_framework_nested.relations import NestedHyperlinkedRelatedField
 
 
-from .models import Account, Host, Contact
+from .models import Account, Host, Contact, Alert
+
+
+
+class AlertSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Alert
+        fields  = ("options", "host", "active")
 
 
 class ContactSerailizer(serializers.ModelSerializer):
-    parent_lookup_kwargs={'accounts_pk': 'account__pk'}
     class Meta:
         model = Contact
         fields = ("id","name", "phone", "email", "active")

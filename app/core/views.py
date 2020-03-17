@@ -1,8 +1,9 @@
 from django.shortcuts import render, get_object_or_404
 from .serializers import AccountSerializer, HostSerializer, ContactSerailizer
+from .serializers import AlertSerializer
 from rest_framework import viewsets
 from rest_framework.response import Response
-from .models import Account, Host, PING, BLACKLIST, Contact
+from .models import Account, Host, PING, BLACKLIST, Contact, Alert
 from rest_framework.permissions import IsAuthenticated
 from django.conf import settings
 from influxdb import InfluxDBClient
@@ -10,6 +11,12 @@ import json
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
 from rest_framework.decorators import action
+
+
+class AlertViewset(viewsets.ModelViewSet):
+    permission_classes = [IsAuthenticated]
+    serializer_class=AlertSerializer
+    queryset = Alert.objects.all()
 
 
 class ConcactViewset(viewsets.ModelViewSet):
