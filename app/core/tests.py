@@ -32,7 +32,7 @@ class TestRest(APITestCase):
         }
         self.post("account-hosts-list", accounts_pk=id, data=data)
         self.response_201()
-        return self.last_response.json()
+        return id, self.last_response.json()
 
     def test_create(self):
         self._create_account()
@@ -41,11 +41,40 @@ class TestRest(APITestCase):
         resp = self._create_hosts()
 
     def test_host_detail(self):
-        resp = self._create_hosts()
-        print(resp)
+        id, resp = self._create_hosts()
         host_id = resp.get("id")
         self.get("account-hosts-detail", accounts_pk=id, pk = host_id)
+
         self.response_200()
         resp = self.last_response.json()
         self.assertTrue(resp)
+    def test_create_contact(self):
+        id, _ = self._create_hosts()
+        self.get_check_200("account-contacts-list", accounts_pk=id)
+
+        data = {
+            'name': self.faker.name(),
+            'phone': self.faker.phone_number(),
+            'email': self.faker.email()
+        }
+
+        self.post("account-contacts-list", accounts_pk=id, data=data)
+        self.response_201()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

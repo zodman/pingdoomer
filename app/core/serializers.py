@@ -9,9 +9,10 @@ from .models import Account, Host, Contact
 
 
 class ContactSerailizer(serializers.ModelSerializer):
+    parent_lookup_kwargs={'accounts_pk': 'account__pk'}
     class Meta:
         model = Contact
-        fields = "__all__"
+        fields = ("id","name", "phone", "email", "active")
 
 
 

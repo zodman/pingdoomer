@@ -17,6 +17,13 @@ class ConcactViewset(viewsets.ModelViewSet):
     serializer_class = ContactSerailizer
     queryset = Contact.objects.all()
 
+    def perform_update(self, serializer):
+        serializer.save(account_id = self.kwargs["accounts_pk"])
+
+    def perform_create(self, serializer):
+        serializer.save(account_id = self.kwargs["accounts_pk"])
+
+
 class AccountViewset(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
     serializer_class = AccountSerializer
