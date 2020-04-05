@@ -19,6 +19,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'bsync',
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -29,6 +30,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "rest_framework.authtoken",
     'corsheaders',
+    'django_seed',
 ]
 
 MIDDLEWARE = [

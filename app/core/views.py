@@ -15,8 +15,17 @@ from rest_framework.decorators import action
 
 class AlertViewset(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
-    serializer_class=AlertSerializer
+    serializer_class = AlertSerializer
     queryset = Alert.objects.all()
+
+    def perform_update(self, serializer):
+        serializer.save(account_id=self.kwargs["accounts_pk"],
+                        host_id=self.kwargs["hosts_pk"])
+
+    def perform_create(self, serializer):
+        serializer.save(account_id=self.kwargs["accounts_pk"],
+                        host_id=self.kwargs["hosts_pk"])
+
 
 
 class ConcactViewset(viewsets.ModelViewSet):
@@ -25,10 +34,10 @@ class ConcactViewset(viewsets.ModelViewSet):
     queryset = Contact.objects.all()
 
     def perform_update(self, serializer):
-        serializer.save(account_id = self.kwargs["accounts_pk"])
+        serializer.save(account_id=self.kwargs["accounts_pk"])
 
     def perform_create(self, serializer):
-        serializer.save(account_id = self.kwargs["accounts_pk"])
+        serializer.save(account_id=self.kwargs["accounts_pk"])
 
 
 class AccountViewset(viewsets.ModelViewSet):
@@ -45,15 +54,15 @@ class HostViewset(viewsets.ModelViewSet):
         return hosts
 
     def perform_update(self, serializer):
-        serializer.save(account_id = self.kwargs["accounts_pk"])
+        serializer.save(account_id=self.kwargs["accounts_pk"])
 
     def perform_create(self, serializer):
-        serializer.save(account_id = self.kwargs["accounts_pk"])
+        serializer.save(account_id=self.kwargs["accounts_pk"])
 
     # @method_decorator(cache_page(10))
     @action(detail=True)
     def result(self, request, pk=None, accounts_pk=None):
-        qs = Host.objects.all().filter(account_id= accounts_pk)
+        qs = Host.objects.all().filter(account_id=accounts_pk)
         host = get_object_or_404(qs, pk=pk)
         if host.type == PING:
             return self._ping(host)
@@ -65,29 +74,30 @@ class HostViewset(viewsets.ModelViewSet):
         client = InfluxDBClient(**influx_conf)
         external_id = host.account.external_id
         hostname = host.hostname
-        sql_all =f"""
-        select * 
-                FROM "ping"."autogen"."account_{external_id}" 
-                     WHERE time > now() - 7d 
+        sql_all = f"""
+        select *
+                FROM "ping"."autogen"."account_{external_id}"
+                     WHERE time > now() - 7d
                      AND "hostname"='{hostname}' limit 50
         """
         sql = f"""
             Select * from (
-            SELECT 
-                count("rtt_avg") AS "count_rtt_avg", 
+            SELECT
+                count("rtt_avg") AS "count_rtt_avg",
                 mean("rtt_avg") AS "mean_rtt_avg"
-                FROM "ping"."autogen"."account_{external_id}" 
-                     WHERE time > now() - 30d 
+                FROM "ping"."autogen"."account_{external_id}"
+                     WHERE time > now() - 30d
                      AND "hostname"='{hostname}'
                      GROUP BY time(10m)
 
-                    ) where "count_rtt_avg" > 0  
+                    ) where "count_rtt_avg" > 0
         """
         res = {
             'all': list(client.query(sql_all).get_points()),
             'summary': list(client.query(sql).get_points())
         }
         return Response(res)
+
     def _blacklist(self, host):
 
         influx_conf = settings.PING_CONFIG["INFLUXDB"]
@@ -95,27 +105,27 @@ class HostViewset(viewsets.ModelViewSet):
         external_id = host.account.external_id
         hostname = host.hostname
         sql = f"""
-            SELECT last("blacklisted") AS "last_blacklisted" 
+            SELECT last("blacklisted") AS "last_blacklisted"
             FROM "ping"."autogen"."account_{external_id}_bl"
-            WHERE time > now() - 7d AND time < now() 
+            WHERE time > now() - 7d AND time < now()
             and "hostname"='{hostname}'
-            GROUP BY time(1m), "hostname" 
-            FILL(0)  
+            GROUP BY time(1m), "hostname"
+            FILL(0)
             order by time asc
             limit 1
 
         """
         res = list(client.query(sql).get_points())
-        
+
         sql = f"""
-        SELECT * FROM "ping"."autogen"."account_{external_id}_bl" 
+        SELECT * FROM "ping"."autogen"."account_{external_id}_bl"
         WHERE time > now() -7d
             AND time < now()
-            AND "hostname"='{hostname}' 
+            AND "hostname"='{hostname}'
             order by time desc
             limit 1
         """
         res2 = list(client.query(sql).get_points())
-        return Response({'last': res, 'all':res2})
+        return Response({'last': res, 'all': res2})
 
 

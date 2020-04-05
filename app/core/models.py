@@ -1,17 +1,20 @@
 from django.db import models
 
+
 class Contact(models.Model):
     name = models.CharField(max_length=100)
     phone = models.CharField(max_length=20)
     email = models.EmailField(blank=True, null=True)
     active = models.BooleanField(default=True)
-    account = models.ForeignKey("Account", related_name="contacts", on_delete=models.CASCADE)
+    account = models.ForeignKey("Account", related_name="contacts",
+                                on_delete=models.CASCADE)
 
     def __str__(self):
         return self.name
 
     class Meta:
         unique_together =("phone", "email")
+
 
 class Account(models.Model):
     name = models.CharField(max_length=100)
@@ -20,8 +23,9 @@ class Account(models.Model):
     def __str__(self):
         return self.name
 
-PING="ping"
-BLACKLIST="black"
+PING = "ping"
+BLACKLIST = "black"
+
 
 class Host(models.Model):
     MONITOR_CHOICES = (
@@ -43,8 +47,10 @@ class Host(models.Model):
 
 class Alert(models.Model):
     options = models.TextField()
-    host = models.ForeignKey("Host", related_name="alerts", on_delete=models.CASCADE)
+    host = models.ForeignKey("Host",
+                             related_name="alerts",
+                             on_delete=models.CASCADE)
     active = models.BooleanField(default=True)
-    account = models.ForeignKey("Account", related_name="alerts", on_delete=models.CASCADE)
-
+    account = models.ForeignKey("Account",  on_delete=models.CASCADE)
+    contacts = models.ManyToManyField("Contact")
 
