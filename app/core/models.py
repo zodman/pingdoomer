@@ -8,11 +8,11 @@ from notifiers import get_notifier
 def validate_options(opts):
     python_objs = json.loads(opts)
     if not isinstance(python_objs, list):
-        raise ValidationError("error [{'notifier':'name', 'options': ..}, ...]")
+        raise ValidationError("error [{'provider':'name', 'options': ..}, ...]")
     for i in python_objs:
         if not isinstance(i, dict):
-            raise ValidationError(" {'notifier':'name', 'options': ..}")
-        notifier_provider = i.get("notifier")
+            raise ValidationError(" {'provider':'name', 'options': ..}")
+        notifier_provider = i.get("provider")
         options = i.get("options")
         provider = get_notifier(notifier_provider)
 
