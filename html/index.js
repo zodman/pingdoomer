@@ -4,7 +4,7 @@ chartjs = require("chart.js");
 _ = require("lodash")
 
 let url ="http://localhost:8000/api/"
-let TOKEN = "45dd454f58fae44d5289e49ca2823de424df1afb"
+let TOKEN = "f0f4a0c4dcda16c1bd48365998985da0fa9d74f5"
 
 //configure
 $.ajaxSetup({
