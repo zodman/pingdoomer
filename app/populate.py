@@ -21,8 +21,10 @@ contact, _ = Contact.objects.get_or_create(account=account,
                                   email="pingdoomer@tempemailaddress.com"
                                   )
 
+Alert.objects.all().delete()
+
 options = """
-{'email':True}
+{'type':''}
 """
 
 for host, type in HOSTS:

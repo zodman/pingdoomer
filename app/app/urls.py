@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.urls import path, include
-from core.views import AccountViewset, HostViewset, ConcactViewset, AlertViewset
+from core.views import AccountViewset, HostViewset,AlertViewset
 from django.shortcuts import redirect
 
 from rest_framework_nested import routers
@@ -11,7 +11,6 @@ router.register(r'accounts', AccountViewset)
 hosts_router = routers.NestedDefaultRouter(router, r'accounts',
                                            lookup='accounts')
 hosts_router.register(r"hosts", HostViewset, basename="account-hosts")
-hosts_router.register(r"contacts", ConcactViewset, basename="account-contacts")
 
 alerts_router = routers.NestedDefaultRouter(hosts_router, r'hosts',
                                             lookup='hosts')

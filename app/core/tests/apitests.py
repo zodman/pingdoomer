@@ -1,6 +1,7 @@
 from rest_framework.authtoken.models import Token
 from test_plus import APITestCase
 import faker
+import json
 
 
 class TestRest(APITestCase):
@@ -50,17 +51,6 @@ class TestRest(APITestCase):
         resp = self.last_response.json()
         self.assertTrue(resp)
 
-    def _create_contact(self, account_id):
-        resp = self._create_hosts(account_id)
-        self.get_check_200("account-contacts-list", accounts_pk=account_id)
-        data = {
-            'name': self.faker.name(),
-            'phone': self.faker.phone_number(),
-            'email': self.faker.email()
-        }
-        self.post("account-contacts-list", accounts_pk=account_id, data=data)
-        self.response_201()
-        resp = self.last_response.json()
         return resp
 
     def test_create_alerts(self):
@@ -69,7 +59,9 @@ class TestRest(APITestCase):
         resp = self._create_hosts(account_id)
         host_id = resp.get("id")
         data = {
-            'options': self.faker.sentence(),
+            'options': json.dumps({
+                'message': 'Notify 11111',
+            }),
             'active': True,
         }
         self.post("alerts-list",

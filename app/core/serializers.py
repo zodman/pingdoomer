@@ -2,25 +2,13 @@ from rest_framework import serializers
 from rest_framework.validators import UniqueTogetherValidator
 from rest_framework_nested.serializers import NestedHyperlinkedModelSerializer
 from rest_framework_nested.relations import NestedHyperlinkedRelatedField as Related
-from .models import Account, Host, Contact, Alert
+from .models import Account, Host,  Alert
 
 
 class AlertSerializer(serializers.HyperlinkedModelSerializer):
-    contacts = Related(many=True, read_only=True,
-                       view_name='contact-detail',
-                       parent_lookup_kwargs={
-                           'accounts_pk': 'account__pk',
-                           'hosts_pk': 'host__pk'
-                       })
     class Meta:
         model = Alert
-        fields = ("options", "active", "id", "contacts")
-
-
-class ContactSerailizer(serializers.ModelSerializer):
-    class Meta:
-        model = Contact
-        fields = ("id", "name", "phone", "email", "active")
+        fields = ("options", "active", "id")
 
 
 class HostSerializer(NestedHyperlinkedModelSerializer):
@@ -52,10 +40,6 @@ class AAAHostSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class AccountSerializer(serializers.HyperlinkedModelSerializer):
-    contacts = Related(many=True,
-                       read_only=True,
-                       view_name='account-contacts-detail',
-                       parent_lookup_kwargs={'accounts_pk': 'account__pk'})
 
     hosts = Related(many=True,
                     read_only=True,
@@ -64,4 +48,4 @@ class AccountSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Account
-        fields = ("id", "name", "external_id", "hosts", "contacts")
+        fields = ("id", "name", "external_id", "hosts")
