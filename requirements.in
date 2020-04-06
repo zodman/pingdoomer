@@ -8,12 +8,7 @@ influxdb
 requests
 django-redis
 django-cors-headers
-
 git+https://github.com/zodman/pydnsbl.git
-
-django-test-plus
 django-seed
-coverage
 honcho
-
-
+notifiers
