@@ -5,7 +5,7 @@ import json
 from django_seed import Seed
 from core.models import Account, Host, Alert
 from notifiers import get_notifier
-
+import os
 
 class TestAlert(APITestCase):
     def setUp(self):
@@ -21,7 +21,7 @@ class TestAlert(APITestCase):
             'options': json.dumps([{
                 'provider': 'telegram',
                 'options': {
-                    'token': '1041934022:AAHH0KPfxVNtAG4FLoRDDZoC533zlHhiC0U',
+                    'token': os.environ.get("TOKEN"),
                     'chat_id': '-296140181',
                 }
             }])
