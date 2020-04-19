@@ -4,6 +4,7 @@ omit = app/*/tests/*, app/*/migrations/*, app/app/*/urls.py, app/*/settings/*, a
 source = .
 
 [report]
+skip_covered = true
 show_missing = true
 exclude_lines =
     pragma: no cover

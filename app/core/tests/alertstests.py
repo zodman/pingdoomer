@@ -48,10 +48,9 @@ class TestAlert(APITestCase):
             opts = doptions.get("options")
             action_provider_name = act_opt.get("provider")
             action_options = act_opt.get("options")
-            if action_provider_name == provider_name:
-                notify = get_notifier(provider_name)
-                opts.update(action_options)
-                notify._validate_data(opts)
+            notify = get_notifier(provider_name)
+            opts.update(action_options)
+            notify._process_data(**opts)
 
             
 
