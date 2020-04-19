@@ -3,21 +3,29 @@ from django.core.exceptions import ValidationError
 import json
 from jsonschema import validate
 from notifiers import get_notifier
+import notifiers.exceptions
+import logging
 
+log = logging.getLogger(__name__)
 
 def validate_options(opts):
     python_objs = json.loads(opts)
     if not isinstance(python_objs, list):
         raise ValidationError("error [{'provider':'name', 'options': ..}, ...]")
     for i in python_objs:
+        log.info(i)
         if not isinstance(i, dict):
             raise ValidationError(" {'provider':'name', 'options': ..}")
         notifier_provider = i.get("provider")
         options = i.get("options")
         provider = get_notifier(notifier_provider)
-
-
-
+        if provider:
+            try:
+                provider._process_data(**options)
+            except notifiers.exceptions.BadArguments as e:
+                raise ValidationError(f"provider {provider.name} {e}")
+        else:
+            raise ValidationError(f"no provider by {i}")
 
 class Account(models.Model):
     name = models.CharField(max_length=100)

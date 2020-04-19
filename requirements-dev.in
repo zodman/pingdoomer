@@ -4,5 +4,6 @@ coverage
 django-test-plus
 coverage
 honcho
+bake-cli
 
 

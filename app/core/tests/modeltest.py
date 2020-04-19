@@ -12,24 +12,26 @@ class ModelTestCase(TestCase):
     def test_account(self):
         email_notifier = get_notifier("email")
         slack_notifier = get_notifier("slack")
+        opts = slack_notifier.defaults.copy()
+        opts.update({'message':'message1','webhook_url':'http://localhost'})
         data = {
             'name': self.faker.first_name(),
             'external_id': self.faker.pyint(),
             'options': json.dumps([{
-                'notifier': 'email',
+                'provider': 'email',
                 'options': {
+                    'username': 'user1',
+                    'password': 'user1',
                     'subject': "New email from 'notifiers'!",
                     'from': 'zodman@aUTOMATION.localdomain',
                     'host': 'localhost',
                     'port': 25,
-                    'tls': False,
-                    'ssl': False,
-                    'html': False,
-                    'login': True
+                    'to': ['nobody@email.com',],
+                    'message': 'msg default',
                 },
             }, {
-                'notifier': 'slack',
-                'options': slack_notifier.defaults,
+                'provider': 'slack',
+                'options': opts,
             }])
         }
         resp = Account(**data)

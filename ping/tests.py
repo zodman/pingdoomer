@@ -1,20 +1,17 @@
 import unittest
-from .tasks import ping, dnsbl, run_ping, insert_influxdb, insert_influxdb_bl, InfluxDBClient
+from .tasks import ping, dnsbl, run_ping, insert_influxdb
+from .tasks import insert_influxdb_bl, InfluxDBClient
 from .tasks import run_dnsbl
 from unittest.mock import patch, MagicMock
 from notifiers.core import all_providers
 from .providers import Dummy
 
-import logging
-logging.disable(logging.CRITICAL)
 
 class TTest(unittest.TestCase):
     def test_noti(self):
         if not "dummy" in all_providers():
             d = Dummy()
             d.notify(d="shshshs")
-
-
 
 @patch("ping.tasks.InfluxDBClient")
 class PingTest(unittest.TestCase):

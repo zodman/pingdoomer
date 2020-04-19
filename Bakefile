@@ -1,6 +1,12 @@
-test:
-	coverage run --source . app/manage.py  test
-	coverage report
+test: test/app test/ping
+
+test/app:
+    cd app
+	coverage run --source . manage.py  test
+    coverage report
+
+test/ping:
+    export PYTHONWARNINGS="ignore"
 	coverage run --source . -m unittest -v
 	coverage report
 

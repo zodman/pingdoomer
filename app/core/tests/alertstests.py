@@ -21,8 +21,9 @@ class TestAlert(APITestCase):
             'options': json.dumps([{
                 'provider': 'telegram',
                 'options': {
-                    'token': os.environ.get("TOKEN"),
-                    'chat_id': '-296140181',
+                    'token': "12321321321",
+                    'chat_id': '1321321',
+                    'message':'message1'
                 }
             }])
         }
@@ -49,8 +50,8 @@ class TestAlert(APITestCase):
             action_options = act_opt.get("options")
             if action_provider_name == provider_name:
                 notify = get_notifier(provider_name)
-                resp = notify.notify(**action_options, **opts)
-                self.assertTrue(resp.ok)
+                opts.update(action_options)
+                notify._validate_data(opts)
 
             
 
