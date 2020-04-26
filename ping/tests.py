@@ -1,13 +1,15 @@
 import unittest
 from .tasks import ping, dnsbl, run_ping, insert_influxdb
 from .tasks import insert_influxdb_bl, InfluxDBClient
-from .tasks import run_dnsbl
+from .tasks import run_dnsbl, check_ping
 from unittest.mock import patch, MagicMock
 from notifiers.core import all_providers
 from .providers import Dummy
 
 
 class TTest(unittest.TestCase):
+    def test_check_ping(self):
+        check_ping()
     def test_noti(self):
         if not "dummy" in all_providers():
             d = Dummy()
@@ -15,7 +17,6 @@ class TTest(unittest.TestCase):
 
 @patch("ping.tasks.InfluxDBClient")
 class PingTest(unittest.TestCase):
-
     def test_ping(self, mock_InfluxDBClient):
         result = ping("google.com")
         self.assertTrue("return_code" in result)
@@ -32,7 +33,3 @@ class PingTest(unittest.TestCase):
         mock_InfluxDBClient.write_points = MagicMock(return_value=True)
         r =run_dnsbl.apply(args=("intranet.interalia.net", {})).get()
         self.assertTrue(r)
-        
-
-
-

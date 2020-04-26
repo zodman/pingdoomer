@@ -2,8 +2,7 @@ from rest_framework import serializers
 from rest_framework.validators import UniqueTogetherValidator
 from rest_framework_nested.serializers import NestedHyperlinkedModelSerializer
 from rest_framework_nested.relations import NestedHyperlinkedRelatedField as Related
-from .models import Account, Host,  Alert
-
+from .models import Account, Host,  Alert, validate_options
 
 class AlertSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
@@ -48,4 +47,8 @@ class AccountSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Account
-        fields = ("id", "name", "external_id", "hosts")
+        fields = ("id", "name", "external_id", "hosts", "options")
+
+    def validate(self, attrs):
+        validate_options(attrs.get("options"))
+        return attrs

@@ -31,6 +31,7 @@ INSTALLED_APPS = [
     "rest_framework.authtoken",
     'corsheaders',
     'django_seed',
+    'collector',
 ]
 
 MIDDLEWARE = [
@@ -133,3 +134,26 @@ CACHES = {
 }
 
 CORS_ORIGIN_ALLOW_ALL=True
+
+INFLUXDB_HOST = 'influxdb.interalia.net'
+INFLUXDB_USERNAME = 'interalia'
+INFLUXDB_PASSWORD = 'zxczxc123'
+
+from celery.schedules import crontab
+
+CELERY_BEAT_SCHEDULE = {
+        'snmp-scheduler': {
+                    'task': 'collector.tasks.snmp_scheduler',
+                    'schedule': crontab(minute='*')
+                }
+}
+CELERY_RESULT_BACKEND = 'redis://localhost/0'
+CELERY_BROKER_URL = 'redis://localhost/1'
+
+# to use non-default values configure also:
+INFLUXDB_PORT = 80
+INFLUXDB_DATABASE = 'temporal1'
+INFLUXDB_RETENTION_POLICY = 'my_policy'
+INFLUXDB_DURATION = '30d'
+
+

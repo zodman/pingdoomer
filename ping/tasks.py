@@ -121,6 +121,8 @@ def dnsbl(hostname, account):
     log.debug(ds)
     return ds
 
+def check_ping():
+    influxdb_client = InfluxDBClient(**INFLUXDB_CONF)
 
 if __name__ == "__main__": # pragma: no cover
     log.debug("set debug")

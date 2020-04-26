@@ -18,6 +18,7 @@ alerts_router.register("alerts", AlertViewset, basename="alerts")
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('collector/', include('collector.urls')),
     path("api/", include(router.urls)),
     path("api/", include(hosts_router.urls)),
     path("api/", include(alerts_router.urls)),
