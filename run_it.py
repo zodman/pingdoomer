@@ -37,12 +37,12 @@ log.info(f"create account {resp.content}")
 resp.raise_for_status()
 account_id = resp.json().get("id")
 assert account_id, f"not account_id {account_id}"
-    
 
 # create hostname
-data = {'hostname':'google.com'}
+data = {'hostname':'62.171.189.208'}
 resp = requests.post(f"{URL}api/accounts/{account_id}/hosts/", data=data, headers=headers)
 resp.raise_for_status()
 log.info(f"create hosts {resp.content}")
 host_id = resp.json().get("id")
+
 
