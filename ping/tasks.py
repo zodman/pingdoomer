@@ -23,29 +23,35 @@ def run_dnsbl(hostname, account):
 
 @app.task
 def fetch(mode, debug=False):
+    hosts = fetch_hosts()
+    for host in hosts:
+        hostname = host["hostname"]
+        if host["type"] == "ping" and mode == "ping":
+            if debug:
+                run_ping(hostname, name, external_id)
+            else:
+                run_ping.delay(hostname, name, external_id)
+        if host["type"] == "black" and mode == "blacklist":
+            if debug:
+                run_dnsbl(hostname, i)
+            else:
+                run_dnsbl.delay(hostname, i)
+
+def fetch_hosts():
     log.info("executing fetch")
     base_url = f"{BASE_URL}api/accounts/"
     resp = requests.get(base_url, headers=headers)
     resp.raise_for_status()
     resp = resp.json()
+    result = []
     for i in resp:
         external_id = i.get("external_id")
         name = i.get("name")
         id = i.get("id")
         hosts = requests.get(f"{base_url}{id}/hosts/").json()
         for host in hosts:
-            hostname = host["hostname"]
-            if host["type"] == "ping" and mode == "ping":
-                if debug:
-                    run_ping(hostname, name, external_id)
-                else:
-                    run_ping.delay(hostname, name, external_id)
-            if host["type"] == "black" and mode == "blacklist":
-                if debug:
-                    run_dnsbl(hostname, i)
-                else:
-                    run_dnsbl.delay(hostname, i)
-
+            result.append(host)
+    return result
 
 
 def insert_influxdb_bl(client, result, account):

@@ -2,6 +2,7 @@ from rest_framework.authtoken.models import Token
 from test_plus import APITestCase
 import faker
 import json
+import os
 
 
 class TestRest(APITestCase):
@@ -13,8 +14,18 @@ class TestRest(APITestCase):
         self.faker = faker.Faker()
 
     def _create_account(self):
-        data = dict(name=self.faker.name(),
-                    external_id=self.faker.random_digit())
+        data = dict(
+            name=self.faker.name(),
+            external_id=self.faker.random_digit(),
+            options=json.dumps([{
+                'provider': 'telegram',
+                'options': {
+                    'message': 'msg default',
+                    'chat_id': "-296140181",
+                    'token': os.environ.get("TOKEN", "12345"),
+                }
+            }]),
+        )
         self.post("account-list", data=data)
         self.response_201()
         return self.last_response.json()

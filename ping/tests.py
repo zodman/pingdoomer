@@ -1,3 +1,6 @@
+import logging
+logging.disable(logging.CRITICAL)
+
 import unittest
 from .tasks import ping, dnsbl, run_ping, insert_influxdb
 from .tasks import insert_influxdb_bl, InfluxDBClient
@@ -5,7 +8,6 @@ from .tasks import run_dnsbl, check_ping
 from unittest.mock import patch, MagicMock
 from notifiers.core import all_providers
 from .providers import Dummy
-
 
 class TTest(unittest.TestCase):
     def test_check_ping(self):
@@ -33,3 +35,8 @@ class PingTest(unittest.TestCase):
         mock_InfluxDBClient.write_points = MagicMock(return_value=True)
         r =run_dnsbl.apply(args=("intranet.interalia.net", {})).get()
         self.assertTrue(r)
+
+
+
+if __name__ == '__main__':
+    unittest.main()
