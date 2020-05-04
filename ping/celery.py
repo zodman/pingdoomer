@@ -40,8 +40,5 @@ def setup_periodic_task(sender, **kwargs):
     sender.add_periodic_task(PING_SECONDS * 1.0, fetch.s("ping", debug=False), name="every {}".format(PING_SECONDS))
     sender.add_periodic_task(BLACKLIST_SECONDS * 1.0, fetch.s("blacklist", debug=False), name="every {}".format(BLACKLIST_SECONDS))
 
-
-
-
 if __name__ == "__main__": # pragma: no cover
     app.start()

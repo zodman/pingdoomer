@@ -35,6 +35,17 @@ class Account(models.Model):
     def __str__(self):
         return self.name
 
+from django.dispatch import receiver
+from django.db.models.signals import post_delete
+
+@receiver(post_delete)
+def delete_messurage(sender, instance, **kwargs):
+    from influxdb import InfluxDBClient
+    from django.conf import settings
+    external_id = instance.external_id
+    client = InfluxDBClient(**settings.PING_CONFIG.get("INFLUXDB",{}))
+    sql =f'drop measurement  account_{external_id}'
+    res = client.query(sql)
 
 PING = "ping"
 BLACKLIST = "black"

@@ -4,7 +4,7 @@ logging.disable(logging.CRITICAL)
 import unittest
 from .tasks import ping, dnsbl, run_ping, insert_influxdb
 from .tasks import insert_influxdb_bl, InfluxDBClient
-from .tasks import run_dnsbl, check_ping
+from .tasks import run_dnsbl, check_ping, schedule_alerts
 from unittest.mock import patch, MagicMock
 from notifiers.core import all_providers
 from .providers import Dummy
@@ -16,6 +16,9 @@ class TTest(unittest.TestCase):
         if not "dummy" in all_providers():
             d = Dummy()
             d.notify(d="shshshs")
+
+    def test_schedule_alerts(self):
+        schedule_alerts()
 
 @patch("ping.tasks.InfluxDBClient")
 class PingTest(unittest.TestCase):
